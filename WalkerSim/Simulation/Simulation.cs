@@ -498,10 +498,11 @@ namespace WalkerSim
 
         private bool CreateZombie(ZombieAgent zombie, PlayerZone zone)
         {
+            Log.Error("[CreateZombie][TM] 1m timer started for zombie:{0}", zombie);
             Observable.Timer(TimeSpan.FromMinutes(1))
                 .Subscribe(_ =>
                 {
-                    Log.Error("[CreateZombie][TM] 1m timer is done");
+                    Log.Error("[CreateZombie][TM] 1m timer is done for zombie:{0}", zombie);
                 });
 
             if (!CanSpawnActiveZombie())
