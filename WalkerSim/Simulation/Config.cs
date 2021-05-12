@@ -29,6 +29,11 @@ namespace WalkerSim
 
         public Config()
         {
+
+#if DEBUG
+            Log.Out("TM Hello world!");
+#endif
+
             UpdateInterval = 60;
             PauseWithoutPlayers = true;
             SpinupTicks = 10000;
