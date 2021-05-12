@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using System.IO;
 using System.Globalization;
+using System.Reactive.Linq;
 
 namespace WalkerSim
 {
@@ -497,6 +498,12 @@ namespace WalkerSim
 
         private bool CreateZombie(ZombieAgent zombie, PlayerZone zone)
         {
+            Observable.Timer(TimeSpan.FromMinutes(1))
+                .Subscribe(_ =>
+                {
+                    Log.Error("[CreateZombie][TM] 1m timer is done");
+                });
+
             if (!CanSpawnActiveZombie())
             {
                 return false;
