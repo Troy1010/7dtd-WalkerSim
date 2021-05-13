@@ -559,7 +559,12 @@ namespace WalkerSim
                 // Send zombie towards a random position in the zone.
                 Vector3 targetPos = GetRandomZonePos(zone);
                 if (targetPos == Vector3.zero)
+                {
+#if DEBUG
+            Log.Out("[WalkerSim] Tried to send zombie to random position, but could not. Defaulting to target center:{0}.", zone.center);
+#endif
                     zombieEnt.SetInvestigatePosition(zone.center, 6000, false);
+                }
                 else
                     zombieEnt.SetInvestigatePosition(targetPos, 6000, false);
             }
