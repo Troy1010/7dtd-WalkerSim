@@ -554,9 +554,7 @@ namespace WalkerSim
                 Vector3 targetPos = GetRandomZonePos(zone);
                 if (targetPos == Vector3.zero)
                 {
-#if DEBUG
-            Log.Out("[WalkerSim] Tried to send zombie to random position, but could not. Defaulting to target center:{0}.", zone.center);
-#endif
+                    Log.Out("[WalkerSim][TM] Tried to send zombie to random position, but could not. Defaulting to target center:{0}.", zone.center);
                     zombieEnt.SetInvestigatePosition(zone.center, 6000, false);
                 }
                 else
@@ -755,7 +753,7 @@ namespace WalkerSim
                     if (!removeZombie && zombie.state == ZombieAgent.State.Idle)
                     {
 #if DEBUG
-                                Log.Out("[WalkerSim][TM] Move idle zombie");
+                        Log.Out("[WalkerSim][TM] Move idle zombie");
 #endif
                         ent.SetInvestigatePosition(GetRandomBorderPoint(), 6000, false);
                     }
