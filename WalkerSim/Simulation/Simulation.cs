@@ -101,6 +101,7 @@ namespace WalkerSim
 #endif
             {
                 Log.Out("Starting server...");
+                Log.Out("[TM] !*!*! START");
 
                 _server.OnClientConnected += new ViewServer.OnClientConnectedDelegate(OnClientConnected);
                 _state.OnChange += new State.OnChangeDelegate(OnStateChanged);
