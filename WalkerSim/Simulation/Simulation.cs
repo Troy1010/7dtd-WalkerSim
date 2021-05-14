@@ -498,13 +498,6 @@ namespace WalkerSim
 
         private bool CreateZombie(ZombieAgent zombie, PlayerZone zone)
         {
-            Log.Out("[CreateZombie][TM] 1m timer started for zombie:{0}", zombie);
-            Observable.Timer(TimeSpan.FromMinutes(1))
-                .Subscribe(_ =>
-                {
-                    Log.Out("[CreateZombie][TM] 1m timer is done for zombie:{0}", zombie);
-                });
-
             if (!CanSpawnActiveZombie())
             {
                 return false;
@@ -666,6 +659,9 @@ namespace WalkerSim
         // NOTE: A call must only be made from the main thread.
         private void UpdateActiveZombies()
         {
+#if DEBUG
+            Log.Out("[WalerSim][TM] Update Active Zombies`open");
+#endif
             var world = GameManager.Instance.World;
             int maxPerZone = MaxZombiesPerZone();
             int deactivatedZombies = 0;
@@ -752,6 +748,15 @@ namespace WalkerSim
                         if (_activeZombies.Count == 0)
                             break;
                         i--;
+                    }
+
+                    // If zombie is idle, send it somewhere
+                    if (!removeZombie && zombie.state == ZombieAgent.State.Idle)
+                    {
+#if DEBUG
+                                Log.Out("[WalkerSim][TM] Move idle zombie");
+#endif
+                        ent.SetInvestigatePosition(GetRandomBorderPoint(), 6000, false);
                     }
                 }
             }
