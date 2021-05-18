@@ -137,8 +137,13 @@ namespace WalkerSim
                             var distanceToTarget = Vector3.Distance(entityZombie.position, entityZombie.InvestigatePosition);
                             if (distanceToTarget <= 10.0f)
                             {
-                                TMLogE($"!*!*! Zombie leaving. i:{i}");
-                                entityZombie.SetInvestigatePosition(GetRandomBorderPoint(), 6000, false);
+                                var newTarget = ((zombieAgent.pos - zombieAgent.spawnPos).normalized * 2000) + zombieAgent.spawnPos;
+                                TMLogE($"!*!*! Zombie leaving. i:{i} spawnPos:{zombieAgent.spawnPos} currentPos:{zombieAgent.pos} newTarget:{newTarget}");
+                                
+                                entityZombie.SetInvestigatePosition(
+                                    newTarget,
+                                    6000,
+                                    false);
                             }
                             else
                             {
@@ -623,6 +628,7 @@ namespace WalkerSim
 
             zone.numZombies++;
 
+            zombie.spawnPos = spawnPos;
 #if DEBUG
             Log.Out("[WalkerSim] Spawned zombie {0} at {1}", zombieEnt, spawnPos);
 #endif
