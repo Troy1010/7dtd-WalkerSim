@@ -7,6 +7,7 @@ using UnityEngine;
 using System.IO;
 using System.Globalization;
 using System.Reactive.Linq;
+using System.Reactive.Concurrency;
 
 namespace WalkerSim
 {
@@ -119,7 +120,49 @@ namespace WalkerSim
             _worker.WorkerSupportsCancellation = true;
             _worker.DoWork += BackgroundUpdate;
 
+
+            Observable.Interval(TimeSpan.FromSeconds(5))
+                .ObserveOn(Scheduler.CurrentThread)
+                .Subscribe(it =>
+                {
+                    TMLog($"5s loop. _activeZombies.Count:{_activeZombies.Count}");
+                    lock (_activeZombies)
+                    {
+                        for (int i = 0; i < _activeZombies.Count; i++)
+                        {
+                            ZombieAgent zombieAgent = _activeZombies[i];
+                            EntityZombie entityZombie = world.GetEntity(zombieAgent.entityId) as EntityZombie;
+
+                            // If zombie reached its target, send it somewhere
+                            var distanceToTarget = Vector3.Distance(entityZombie.position, entityZombie.InvestigatePosition);
+                            if (distanceToTarget <= 10.0f)
+                            {
+                                TMLogE($"!*!*! Zombie leaving. i:{i}");
+                                entityZombie.SetInvestigatePosition(GetRandomBorderPoint(), 6000, false);
+                            }
+                            else
+                            {
+                                TMLog($"zombie i:{i} distance:{distanceToTarget}");
+                            }
+                        }
+                    }
+                });
+
             Log.Out("[WalkerSim] Initialized");
+        }
+
+        void TMLog(String msg)
+        {
+#if DEBUG
+            Log.Out($"[TM] {msg}");
+#endif
+        }
+
+        void TMLogE(String msg)
+        {
+#if DEBUG
+            Log.Error($"[TM] {msg}");
+#endif
         }
 
         void OnClientConnected(ViewServer sender, ViewServer.Client cl)
@@ -658,9 +701,6 @@ namespace WalkerSim
         // NOTE: A call must only be made from the main thread.
         private void UpdateActiveZombies()
         {
-#if DEBUG
-            Log.Out("[WalerSim][TM] Update Active Zombies`open");
-#endif
             var world = GameManager.Instance.World;
             int maxPerZone = MaxZombiesPerZone();
             int deactivatedZombies = 0;
@@ -747,15 +787,6 @@ namespace WalkerSim
                         if (_activeZombies.Count == 0)
                             break;
                         i--;
-                    }
-
-                    // If zombie is idle, send it somewhere
-                    if (!removeZombie && zombie.state == ZombieAgent.State.Idle)
-                    {
-#if DEBUG
-                        Log.Out("[WalkerSim][TM] Move idle zombie");
-#endif
-                        ent.SetInvestigatePosition(GetRandomBorderPoint(), 6000, false);
                     }
                 }
             }
