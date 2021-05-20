@@ -182,7 +182,7 @@ namespace WalkerSim
                 northOrSouthChar = "S";
             else
                 northOrSouthChar = "N";
-            return $"{northOrSouthChar}{eastOrWestChar}";
+            return $"{northOrSouthChar}:{from.y - to.y}|{eastOrWestChar}:{from.x - to.x}";
         }
 
         void TMLog(String msg)
