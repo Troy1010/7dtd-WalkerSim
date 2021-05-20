@@ -74,6 +74,9 @@ namespace WalkerSim
         BackgroundWorker _worker = new BackgroundWorker();
         bool _running = false;
 
+
+
+
         public Simulation()
         {
             Config.Instance.Load(ConfigFile);
@@ -120,6 +123,7 @@ namespace WalkerSim
             _worker.WorkerSupportsCancellation = true;
             _worker.DoWork += BackgroundUpdate;
 
+            EntityZombie zombieToWatch;
 
             Observable.Interval(TimeSpan.FromSeconds(5))
                 .ObserveOn(Scheduler.CurrentThread)
@@ -138,7 +142,7 @@ namespace WalkerSim
                             if (distanceToTarget <= 20.0f)
                             {
                                 var newTarget = ((zombieAgent.pos - zombieAgent.spawnPos).normalized * 2000) + zombieAgent.spawnPos;
-                                if (i == 0)
+                                if (i == _activeZombies.Count - 1)
                                     TMLogE($"!*!*! Zombie leaving. i:{i} spawnPos:{zombieAgent.spawnPos} currentPos:{zombieAgent.pos} newTarget:{newTarget}");
                                 
                                 entityZombie.SetInvestigatePosition(
@@ -153,7 +157,7 @@ namespace WalkerSim
                                 Vector3 playerPosWithoutY = world.Players.list[0].position;
                                 playerPosWithoutY.y = 0;
 
-                                if (i == 0)
+                                if (i == _activeZombies.Count - 1)
                                 {
                                     TMLog($"zombie i:{i} distanceToZombie:{distanceToTarget} distanceToPlayer:" +
                                         $"{Vector3.Distance(zombiePosWithoutY, playerPosWithoutY)} directionToZombie:{getCompassString(getPlayer().position, entityZombie.position)}");
@@ -179,10 +183,10 @@ namespace WalkerSim
                 eastOrWestChar = "W";
             String northOrSouthChar;
             if (from.z - to.z < 0.0f)
-                northOrSouthChar = "S";
-            else
                 northOrSouthChar = "N";
-            return $"{northOrSouthChar}:{from.y - to.y}|{eastOrWestChar}:{from.x - to.x}";
+            else
+                northOrSouthChar = "S";
+            return $"{northOrSouthChar}:{from.z - to.z}|{eastOrWestChar}:{from.x - to.x}";
         }
 
         void TMLog(String msg)
