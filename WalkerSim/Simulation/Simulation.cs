@@ -174,15 +174,15 @@ namespace WalkerSim
         {
             String eastOrWestChar;
             if (from.x - to.x < 0.0f)
-                eastOrWestChar = "W";
-            else
                 eastOrWestChar = "E";
+            else
+                eastOrWestChar = "W";
             String northOrSouthChar;
             if (from.z - to.z < 0.0f)
                 northOrSouthChar = "S";
             else
                 northOrSouthChar = "N";
-            return $"{eastOrWestChar}{northOrSouthChar}";
+            return $"{northOrSouthChar}{eastOrWestChar}";
         }
 
         void TMLog(String msg)
