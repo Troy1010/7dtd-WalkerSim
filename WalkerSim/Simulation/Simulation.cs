@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -135,7 +135,7 @@ namespace WalkerSim
 
                             // If zombie reached its target, send it somewhere
                             var distanceToTarget = Vector3.Distance(entityZombie.position, entityZombie.InvestigatePosition);
-                            if (distanceToTarget <= 10.0f)
+                            if (distanceToTarget <= 20.0f)
                             {
                                 var newTarget = ((zombieAgent.pos - zombieAgent.spawnPos).normalized * 2000) + zombieAgent.spawnPos;
                                 if (i == 0)
