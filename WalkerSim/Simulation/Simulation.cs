@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -138,7 +138,8 @@ namespace WalkerSim
                             if (distanceToTarget <= 10.0f)
                             {
                                 var newTarget = ((zombieAgent.pos - zombieAgent.spawnPos).normalized * 2000) + zombieAgent.spawnPos;
-                                TMLogE($"!*!*! Zombie leaving. i:{i} spawnPos:{zombieAgent.spawnPos} currentPos:{zombieAgent.pos} newTarget:{newTarget}");
+                                if (i == 0)
+                                    TMLogE($"!*!*! Zombie leaving. i:{i} spawnPos:{zombieAgent.spawnPos} currentPos:{zombieAgent.pos} newTarget:{newTarget}");
                                 
                                 entityZombie.SetInvestigatePosition(
                                     newTarget,
@@ -147,7 +148,29 @@ namespace WalkerSim
                             }
                             else
                             {
-                                TMLog($"zombie i:{i} distance:{distanceToTarget}");
+                                Vector3 zombiePosWithoutY = entityZombie.position;
+                                zombiePosWithoutY.y = 0;
+                                Vector3 playerPosWithoutY = world.Players.list[0].position;
+                                playerPosWithoutY.y = 0;
+
+                                String eastOrWestChar;
+                                if (zombiePosWithoutY.x - playerPosWithoutY.x < 0.0f)
+                                    eastOrWestChar = "W";
+                                else
+                                    eastOrWestChar = "E";
+
+                                String northOrSouthChar;
+                                if (zombiePosWithoutY.z - playerPosWithoutY.z < 0.0f)
+                                    northOrSouthChar = "S";
+                                else
+                                    northOrSouthChar = "N";
+
+                                if (i == 0)
+                                {
+                                    TMLog($"zombie i:{i} distanceToZombie:{distanceToTarget} distanceToPlayer:" +
+                                        $"{Vector3.Distance(zombiePosWithoutY, playerPosWithoutY)} directionToZombie:{northOrSouthChar}{eastOrWestChar}");
+                                    TMLog($"playerPosition:{world.Players.list[0].position}");
+                                }
                             }
                         }
                     }
