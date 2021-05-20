@@ -153,23 +153,10 @@ namespace WalkerSim
                                 Vector3 playerPosWithoutY = world.Players.list[0].position;
                                 playerPosWithoutY.y = 0;
 
-                                String eastOrWestChar;
-                                if (zombiePosWithoutY.x - playerPosWithoutY.x < 0.0f)
-                                    eastOrWestChar = "W";
-                                else
-                                    eastOrWestChar = "E";
-
-                                String northOrSouthChar;
-                                if (zombiePosWithoutY.z - playerPosWithoutY.z < 0.0f)
-                                    northOrSouthChar = "S";
-                                else
-                                    northOrSouthChar = "N";
-
                                 if (i == 0)
                                 {
                                     TMLog($"zombie i:{i} distanceToZombie:{distanceToTarget} distanceToPlayer:" +
-                                        $"{Vector3.Distance(zombiePosWithoutY, playerPosWithoutY)} directionToZombie:{northOrSouthChar}{eastOrWestChar}");
-                                    TMLog($"playerPosition:{world.Players.list[0].position}");
+                                        $"{Vector3.Distance(zombiePosWithoutY, playerPosWithoutY)} directionToZombie:{getCompassString(getPlayer().position, entityZombie.position)}");
                                 }
                             }
                         }
@@ -177,6 +164,25 @@ namespace WalkerSim
                 });
 
             Log.Out("[WalkerSim] Initialized");
+        }
+        EntityPlayer getPlayer()
+        {
+            return GameManager.Instance.World.Players.list[0];
+        }
+
+        String getCompassString(Vector3 from, Vector3 to)
+        {
+            String eastOrWestChar;
+            if (from.x - to.x < 0.0f)
+                eastOrWestChar = "W";
+            else
+                eastOrWestChar = "E";
+            String northOrSouthChar;
+            if (from.z - to.z < 0.0f)
+                northOrSouthChar = "S";
+            else
+                northOrSouthChar = "N";
+            return $"{eastOrWestChar}{northOrSouthChar}";
         }
 
         void TMLog(String msg)
