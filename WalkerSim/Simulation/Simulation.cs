@@ -123,7 +123,9 @@ namespace WalkerSim
             _worker.WorkerSupportsCancellation = true;
             _worker.DoWork += BackgroundUpdate;
 
-            EntityZombie zombieToWatch;
+#if DEBUG
+            ZombieAgent zombieToWatch = null;
+#endif
 
             Observable.Interval(TimeSpan.FromSeconds(5))
                 .ObserveOn(Scheduler.CurrentThread)
@@ -132,6 +134,9 @@ namespace WalkerSim
                     TMLog($"5s loop. _activeZombies.Count:{_activeZombies.Count}");
                     lock (_activeZombies)
                     {
+#if DEBUG
+                        if (!_activeZombies.Contains(zombieToWatch)) zombieToWatch = _activeZombies[0];
+#endif
                         for (int i = 0; i < _activeZombies.Count; i++)
                         {
                             ZombieAgent zombieAgent = _activeZombies[i];
@@ -142,9 +147,12 @@ namespace WalkerSim
                             if (distanceToTarget <= 20.0f)
                             {
                                 var newTarget = ((zombieAgent.pos - zombieAgent.spawnPos).normalized * 2000) + zombieAgent.spawnPos;
-                                if (i == _activeZombies.Count - 1)
+
+#if DEBUG
+                                if (zombieAgent == zombieToWatch)
                                     TMLogE($"!*!*! Zombie leaving. i:{i} spawnPos:{zombieAgent.spawnPos} currentPos:{zombieAgent.pos} newTarget:{newTarget}");
-                                
+#endif
+
                                 entityZombie.SetInvestigatePosition(
                                     newTarget,
                                     6000,
@@ -152,16 +160,18 @@ namespace WalkerSim
                             }
                             else
                             {
-                                Vector3 zombiePosWithoutY = entityZombie.position;
+                                var zombiePosWithoutY = entityZombie.position;
                                 zombiePosWithoutY.y = 0;
                                 Vector3 playerPosWithoutY = world.Players.list[0].position;
                                 playerPosWithoutY.y = 0;
 
-                                if (i == _activeZombies.Count - 1)
+#if DEBUG
+                                if (zombieAgent == zombieToWatch)
                                 {
                                     TMLog($"zombie i:{i} distanceToZombie:{distanceToTarget} distanceToPlayer:" +
                                         $"{Vector3.Distance(zombiePosWithoutY, playerPosWithoutY)} directionToZombie:{getCompassString(getPlayer().position, entityZombie.position)}");
                                 }
+#endif
                             }
                         }
                     }
@@ -169,6 +179,7 @@ namespace WalkerSim
 
             Log.Out("[WalkerSim] Initialized");
         }
+
         EntityPlayer getPlayer()
         {
             return GameManager.Instance.World.Players.list[0];
