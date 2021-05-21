@@ -176,17 +176,9 @@ namespace WalkerSim
 
         String getCompassString(Vector3 from, Vector3 to)
         {
-            String eastOrWestChar;
-            if (from.x - to.x < 0.0f)
-                eastOrWestChar = "E";
-            else
-                eastOrWestChar = "W";
-            String northOrSouthChar;
-            if (from.z - to.z < 0.0f)
-                northOrSouthChar = "N";
-            else
-                northOrSouthChar = "S";
-            return $"{northOrSouthChar}:{from.z - to.z}|{eastOrWestChar}:{from.x - to.x}";
+            String eastOrWestChar = from.x - to.x < 0.0f ? "E" : "W";
+            String northOrSouthChar = from.z - to.z < 0.0f ? "N" : "S";
+            return $"{northOrSouthChar}{eastOrWestChar}";
         }
 
         void TMLog(String msg)
