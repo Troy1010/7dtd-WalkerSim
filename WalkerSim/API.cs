@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -39,6 +39,7 @@ namespace WalkerSim
             _sim = new Simulation();
             _sim.Start();
         }
+        static bool init = false;
 
         static void GameUpdate()
         {
@@ -49,6 +50,11 @@ namespace WalkerSim
 
                 if (_sim != null)
                 {
+                    if (!init)
+                    {
+                        init = true;
+                        TM.LogThread("MainThread");
+                    }
                     _sim.Update();
                 }
             }

@@ -126,15 +126,15 @@ namespace WalkerSim
             ZombieAgent zombieToWatch = null;
 #endif
 
-            TMLog($"ThreadID:{Thread.CurrentThread.ManagedThreadId}");
+            TM.Logz($"ThreadID:{Thread.CurrentThread.ManagedThreadId}");
 
             Observable.Interval(TimeSpan.FromSeconds(5))
-                .Do(x => { TMLog($"ThreadID:{Thread.CurrentThread.ManagedThreadId}"); })
+                .Do(x => { TM.Logz($"ThreadID:{Thread.CurrentThread.ManagedThreadId}"); })
                 //.ObserveOn(Scheduler.CurrentThread)
                 .ObserveOn(DefaultScheduler.Instance)
                 .Subscribe(it =>
                 {
-                    TMLog($"5s loop. _activeZombies.Count:{_activeZombies.Count} ThreadID:{Thread.CurrentThread.ManagedThreadId}");
+                    TM.Logz($"5s loop. _activeZombies.Count:{_activeZombies.Count} ThreadID:{Thread.CurrentThread.ManagedThreadId}");
                     lock (_activeZombies)
                     {
 #if DEBUG
@@ -153,7 +153,7 @@ namespace WalkerSim
 
 #if DEBUG
                                 if (zombieAgent == zombieToWatch)
-                                    TMLogE($"!*!*! Zombie leaving. i:{i} spawnPos:{zombieAgent.spawnPos} currentPos:{zombieAgent.pos} newTarget:{newTarget}");
+                                    TM.LogE($"!*!*! Zombie leaving. i:{i} spawnPos:{zombieAgent.spawnPos} currentPos:{zombieAgent.pos} newTarget:{newTarget}");
 #endif
 
                                 entityZombie.SetInvestigatePosition(
@@ -171,7 +171,7 @@ namespace WalkerSim
 #if DEBUG
                                 if (zombieAgent == zombieToWatch)
                                 {
-                                    TMLog($"zombie i:{i} distanceToZombie:{distanceToTarget} distanceToPlayer:" +
+                                    TM.Logz($"zombie i:{i} distanceToZombie:{distanceToTarget} distanceToPlayer:" +
                                         $"{Vector3.Distance(zombiePosWithoutY, playerPosWithoutY)} directionToZombie:{getCompassString(getPlayer().position, entityZombie.position)}");
                                 }
 #endif
@@ -193,20 +193,6 @@ namespace WalkerSim
             String eastOrWestChar = from.x - to.x < 0.0f ? "E" : "W";
             String northOrSouthChar = from.z - to.z < 0.0f ? "N" : "S";
             return $"{northOrSouthChar}{eastOrWestChar}";
-        }
-
-        void TMLog(String msg)
-        {
-#if DEBUG
-            Log.Out($"[TM] {msg}");
-#endif
-        }
-
-        void TMLogE(String msg)
-        {
-#if DEBUG
-            Log.Error($"[TM] {msg}");
-#endif
         }
 
         void OnClientConnected(ViewServer sender, ViewServer.Client cl)
