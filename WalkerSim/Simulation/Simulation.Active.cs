@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Threading;
 using UnityEngine;
 
 namespace WalkerSim
@@ -8,7 +10,7 @@ namespace WalkerSim
     {
         List<ZombieAgent> _activeZombies = new List<ZombieAgent>();
         Queue<ZombieSpawnRequest> _spawnQueue = new Queue<ZombieSpawnRequest>();
-
+        
         bool IsSpawnProtected(Vector3 pos)
         {
             var world = GameManager.Instance.World;
@@ -280,6 +282,48 @@ namespace WalkerSim
                     }
                 }
             }
+        }
+
+        void RegisterActiveZombieLogic()
+        {
+            RegisterLeaveAfterReachingTarget();
+        }
+
+        void RegisterLeaveAfterReachingTarget()
+        {
+            var world = GameManager.Instance.World;
+            Observable.Interval(TimeSpan.FromSeconds(5))
+                .ObserveOn(MyScheduler.Instance)
+                .Subscribe(it =>
+                {
+                    lock (_activeZombies)
+                    {
+                        for (int i = 0; i < _activeZombies.Count; i++)
+                        {
+                            ZombieAgent zombieAgent = _activeZombies[i];
+                            EntityZombie entityZombie = world.GetEntity(zombieAgent.entityId) as EntityZombie;
+
+                            // If zombie reached its target, send it somewhere
+                            var distanceToTarget = Vector3.Distance(entityZombie.position, entityZombie.InvestigatePosition);
+                            if (distanceToTarget <= 20.0f)
+                            {
+                                var newTarget = ((zombieAgent.pos - zombieAgent.spawnPos).normalized * 2000) + zombieAgent.spawnPos;
+
+                                entityZombie.SetInvestigatePosition(
+                                    newTarget,
+                                    6000,
+                                    false);
+                            }
+                            else
+                            {
+                                var zombiePosWithoutY = entityZombie.position;
+                                zombiePosWithoutY.y = 0;
+                                Vector3 playerPosWithoutY = world.Players.list[0].position;
+                                playerPosWithoutY.y = 0;
+                            }
+                        }
+                    }
+                });
         }
     }
 }

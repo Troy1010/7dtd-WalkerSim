@@ -93,6 +93,8 @@ namespace WalkerSim
             _worker.WorkerSupportsCancellation = true;
             _worker.DoWork += BackgroundUpdate;
 
+            RegisterActiveZombieLogic();
+            
             Log.Out("[WalkerSim] Initialized");
         }
 

@@ -38,6 +38,7 @@ namespace WalkerSim
         public Vector3 pos = new Vector3();
         public Vector3 targetPos = new Vector3();
         public Vector3 dir = new Vector3();
+        public Vector3 spawnPos = new Vector3();
         public Zone target = null;
         public Zone currentZone = null;
         public List<Zone> visitedZones = new List<Zone>();
