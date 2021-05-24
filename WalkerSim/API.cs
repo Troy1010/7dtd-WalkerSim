@@ -47,6 +47,8 @@ namespace WalkerSim
                 float dt = (float)((double)_stopWatch.ElapsedMicroseconds / 1000000.0);
                 _stopWatch.ResetAndRestart();
 
+                MyScheduler.Instance.Execute();
+                
                 if (_sim != null)
                 {
                     _sim.Update();
