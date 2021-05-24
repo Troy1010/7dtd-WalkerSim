@@ -8,3 +8,6 @@
 /WalkerSimViewer/obj
 /packages
 /dmt
+
+.idea/
+*.user
