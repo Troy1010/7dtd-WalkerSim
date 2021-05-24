@@ -130,8 +130,7 @@ namespace WalkerSim
 
             Observable.Interval(TimeSpan.FromSeconds(5))
                 .Do(x => { TM.Logz($"ThreadID:{Thread.CurrentThread.ManagedThreadId}"); })
-                //.ObserveOn(Scheduler.CurrentThread)
-                .ObserveOn(DefaultScheduler.Instance)
+                .ObserveOn(MyScheduler.Instance)
                 .Subscribe(it =>
                 {
                     TM.Logz($"5s loop. _activeZombies.Count:{_activeZombies.Count} ThreadID:{Thread.CurrentThread.ManagedThreadId}");

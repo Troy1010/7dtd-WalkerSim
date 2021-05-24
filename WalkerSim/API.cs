@@ -55,6 +55,7 @@ namespace WalkerSim
                         init = true;
                         TM.LogThread("MainThread");
                     }
+                    MyScheduler.Instance.Execute();
                     _sim.Update();
                 }
             }
