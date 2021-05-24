@@ -128,7 +128,8 @@ namespace WalkerSim
 #endif
 
             Observable.Interval(TimeSpan.FromSeconds(5))
-                .ObserveOn(Scheduler.CurrentThread)
+                //.ObserveOn(Scheduler.CurrentThread)
+                .ObserveOn(DefaultScheduler.Instance)
                 .Subscribe(it =>
                 {
                     TMLog($"5s loop. _activeZombies.Count:{_activeZombies.Count}");
