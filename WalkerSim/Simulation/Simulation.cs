@@ -5,9 +5,8 @@ using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using System.IO;
-using System.Globalization;
-using System.Reactive.Linq;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 
 namespace WalkerSim
 {
@@ -127,16 +126,19 @@ namespace WalkerSim
             ZombieAgent zombieToWatch = null;
 #endif
 
+            TMLog($"ThreadID:{Thread.CurrentThread.ManagedThreadId}");
+
             Observable.Interval(TimeSpan.FromSeconds(5))
+                .Do(x => { TMLog($"ThreadID:{Thread.CurrentThread.ManagedThreadId}"); })
                 //.ObserveOn(Scheduler.CurrentThread)
                 .ObserveOn(DefaultScheduler.Instance)
                 .Subscribe(it =>
                 {
-                    TMLog($"5s loop. _activeZombies.Count:{_activeZombies.Count}");
+                    TMLog($"5s loop. _activeZombies.Count:{_activeZombies.Count} ThreadID:{Thread.CurrentThread.ManagedThreadId}");
                     lock (_activeZombies)
                     {
 #if DEBUG
-                        if (!_activeZombies.Contains(zombieToWatch)) zombieToWatch = _activeZombies[0];
+                        if (_activeZombies.Count > 0 && !_activeZombies.Contains(zombieToWatch)) zombieToWatch = _activeZombies[0];
 #endif
                         for (int i = 0; i < _activeZombies.Count; i++)
                         {
