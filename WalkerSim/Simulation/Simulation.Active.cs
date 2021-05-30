@@ -308,7 +308,7 @@ namespace WalkerSim
                             if (distanceToTarget <= 20.0f)
                             {
                                 var newTarget = ((zombieAgent.pos - zombieAgent.spawnPos).normalized * 2000) + zombieAgent.spawnPos;
-
+                                Log.Out($"[{zombieAgent.id}] Reached its target at {entityZombie.InvestigatePosition}.  Sending to {newTarget}");
                                 entityZombie.SetInvestigatePosition(
                                     newTarget,
                                     6000,
@@ -316,10 +316,7 @@ namespace WalkerSim
                             }
                             else
                             {
-                                var zombiePosWithoutY = entityZombie.position;
-                                zombiePosWithoutY.y = 0;
-                                Vector3 playerPosWithoutY = world.Players.list[0].position;
-                                playerPosWithoutY.y = 0;
+                                Log.Out($"[{zombieAgent.id}] was {distanceToTarget} away from its target");
                             }
                         }
                     }
