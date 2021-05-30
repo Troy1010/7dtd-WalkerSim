@@ -187,8 +187,6 @@ namespace WalkerSim
                                 targetX = zombie.Inactive.targetPos.x,
                                 targetY = zombie.Inactive.targetPos.y,
                                 targetZ = zombie.Inactive.targetPos.z,
-                                dirX = zombie.Inactive.dir.x,
-                                dirY = zombie.Inactive.dir.z,
                                 target = zombie.Inactive.target is POIZone,
                             });
                         }
@@ -244,7 +242,6 @@ namespace WalkerSim
                                     pos = new Vector3(zombie.x, zombie.y, zombie.z),
                                     health = zombie.health,
                                 };
-                                inactiveZombie.Inactive.dir = new Vector3(zombie.dirX, 0.0f, zombie.dirY);
                                 inactiveZombie.Inactive.target = zombie.target ? _pois.GetRandom(_prng) : null;
                                 inactiveZombie.Inactive.targetPos = new Vector3(zombie.targetX, zombie.targetY, zombie.targetZ);
                                 _inactiveZombies.Add(inactiveZombie);

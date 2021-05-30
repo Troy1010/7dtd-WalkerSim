@@ -121,10 +121,6 @@ namespace WalkerSim
             float speed = _state.ScaledZombieSpeed;
             speed *= dt;
 
-            // Calculate direction towards target position.
-            zombie.dir = zombie.targetPos - zombie.Parent.pos;
-            zombie.dir.Normalize();
-
             var distance = Vector3.Distance(zombie.Parent.pos, zombie.targetPos) * 0.75f;
 
             var t = (zombie.simulationTime + zombie.Parent.id) * 0.2f;

@@ -212,7 +212,6 @@ namespace WalkerSim
             {
                 zombie.pos = ent.GetPosition();
                 zombie.health = ((EntityZombie)ent).Health;
-                zombie.Inactive.dir = -ent.rotation;
 
                 if (ent.IsDead())
                 {

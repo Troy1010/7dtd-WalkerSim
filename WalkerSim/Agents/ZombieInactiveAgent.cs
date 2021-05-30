@@ -11,7 +11,6 @@ namespace WalkerSim
         const int MaxVisitedHistory = 5;
 
         public Vector3 targetPos = new Vector3();
-        public Vector3 dir = new Vector3();
         public Zone target = null;
         public List<Zone> visitedZones = new List<Zone>();
         public float simulationTime = 0.0f;

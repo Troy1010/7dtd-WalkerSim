@@ -12,8 +12,6 @@ namespace WalkerSim
         public float targetX;
         public float targetY;
         public float targetZ;
-        public float dirX;
-        public float dirY;
         public bool target;
     }
 }
