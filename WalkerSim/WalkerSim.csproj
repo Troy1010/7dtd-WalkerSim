@@ -36,6 +36,10 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Agents\ZombieActiveAgent.cs" />
+    <Compile Include="Agents\ZombieInactiveAgent.cs" />
+    <Compile Include="Agents\ZombieAgent.cs" />
+    <Compile Include="Agents\ZombieData.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Extends.cs" />
     <Compile Include="Harmony\LoaderHook.cs" />
@@ -67,7 +71,6 @@
     <Compile Include="API.cs" />
     <Compile Include="Simulation\Simulation.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="Simulation\ZombieAgent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="mod.xml" />
@@ -143,7 +146,6 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="..\ViewData\ViewData.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

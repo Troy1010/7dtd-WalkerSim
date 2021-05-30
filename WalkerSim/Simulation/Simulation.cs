@@ -184,12 +184,12 @@ namespace WalkerSim
                                 x = zombie.pos.x,
                                 y = zombie.pos.y,
                                 z = zombie.pos.z,
-                                targetX = zombie.targetPos.x,
-                                targetY = zombie.targetPos.y,
-                                targetZ = zombie.targetPos.z,
-                                dirX = zombie.dir.x,
-                                dirY = zombie.dir.z,
-                                target = zombie.target is POIZone,
+                                targetX = zombie.Inactive.targetPos.x,
+                                targetY = zombie.Inactive.targetPos.y,
+                                targetZ = zombie.Inactive.targetPos.z,
+                                dirX = zombie.Inactive.dir.x,
+                                dirY = zombie.Inactive.dir.z,
+                                target = zombie.Inactive.target is POIZone,
                             });
                         }
                         formatter.Serialize(stream, data);
@@ -241,12 +241,12 @@ namespace WalkerSim
                             {
                                 var inactiveZombie = new ZombieAgent
                                 {
-                                    health = zombie.health,
                                     pos = new Vector3(zombie.x, zombie.y, zombie.z),
-                                    dir = new Vector3(zombie.dirX, 0.0f, zombie.dirY),
-                                    target = zombie.target ? _pois.GetRandom(_prng) : null,
-                                    targetPos = new Vector3(zombie.targetX, zombie.targetY, zombie.targetZ),
+                                    health = zombie.health,
                                 };
+                                inactiveZombie.Inactive.dir = new Vector3(zombie.dirX, 0.0f, zombie.dirY);
+                                inactiveZombie.Inactive.target = zombie.target ? _pois.GetRandom(_prng) : null;
+                                inactiveZombie.Inactive.targetPos = new Vector3(zombie.targetX, zombie.targetY, zombie.targetZ);
                                 _inactiveZombies.Add(inactiveZombie);
                             }
                             Log.Out("[WalkerSim] Loaded {0} inactive zombies", _inactiveZombies.Count);

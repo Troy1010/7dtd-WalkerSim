@@ -30,12 +30,12 @@ namespace WalkerSim
             }
         }
 
-        void ProcessWorldEvent(ZombieAgent zombie, WorldEvent ev)
+        void ProcessWorldEvent(ZombieInactiveAgent zombie, WorldEvent ev)
         {
             if (ev == null)
                 return;
 
-            var dist = Vector3.Distance(zombie.pos, ev.Pos);
+            var dist = Vector3.Distance(zombie.Parent.pos, ev.Pos);
             if (dist <= ev.Radius)
             {
                 Vector3 soundDir = new Vector3();
@@ -49,11 +49,11 @@ namespace WalkerSim
                 zombie.targetPos = ev.Pos + soundDir;
                 zombie.target = _worldZones.FindByPos2D(zombie.targetPos);
 
-                zombie.state = ZombieAgent.State.Investigating;
+                zombie.Parent.state = ZombieAgent.State.Investigating;
             }
         }
 
-        private Zone GetNextTarget(ZombieAgent zombie)
+        private Zone GetNextTarget(ZombieInactiveAgent zombie)
         {
             if (_prng.Chance(Config.Instance.POITravellerChance))
             {
@@ -83,9 +83,9 @@ namespace WalkerSim
             return pos;
         }
 
-        private void UpdateTarget(ZombieAgent zombie)
+        private void UpdateTarget(ZombieInactiveAgent zombie)
         {
-            if (zombie.state != ZombieAgent.State.Idle)
+            if (zombie.Parent.state != ZombieAgent.State.Idle)
             {
                 // If we have an active target wait for arrival.
                 if (!zombie.ReachedTarget())
@@ -96,7 +96,7 @@ namespace WalkerSim
 
             if (_state.IsBloodMoon)
             {
-                zombie.target = _playerZones.GetRandomClosest(zombie.pos, _prng, 200.0f, null);
+                zombie.target = _playerZones.GetRandomClosest(zombie.Parent.pos, _prng, 200.0f, null);
                 if (zombie.target == null)
                 {
                     zombie.target = GetNextTarget(zombie);
@@ -108,10 +108,10 @@ namespace WalkerSim
             }
 
             zombie.targetPos = GetTargetPos(zombie.target);
-            zombie.state = ZombieAgent.State.Wandering;
+            zombie.Parent.state = ZombieAgent.State.Wandering;
         }
 
-        void UpdateApproachTarget(ZombieAgent zombie, float dt)
+        void UpdateApproachTarget(ZombieInactiveAgent zombie, float dt)
         {
 #if false
             // Test investigation.
@@ -122,20 +122,20 @@ namespace WalkerSim
             speed *= dt;
 
             // Calculate direction towards target position.
-            zombie.dir = zombie.targetPos - zombie.pos;
+            zombie.dir = zombie.targetPos - zombie.Parent.pos;
             zombie.dir.Normalize();
 
-            var distance = Vector3.Distance(zombie.pos, zombie.targetPos) * 0.75f;
+            var distance = Vector3.Distance(zombie.Parent.pos, zombie.targetPos) * 0.75f;
 
-            var t = (zombie.simulationTime + zombie.id) * 0.2f;
+            var t = (zombie.simulationTime + zombie.Parent.id) * 0.2f;
             var offset = new Vector3(Mathf.Cos(t), 0.0f, Mathf.Sin(t));
             offset *= distance;
 
             // Move towards target.
-            zombie.pos = Vector3.MoveTowards(zombie.pos, zombie.targetPos + offset, speed);
+            zombie.Parent.pos = Vector3.MoveTowards(zombie.Parent.pos, zombie.targetPos + offset, speed);
         }
 
-        void UpdateInactiveZombie(ZombieAgent zombie, float dt, WorldEvent ev)
+        void UpdateInactiveZombie(ZombieInactiveAgent zombie, float dt, WorldEvent ev)
         {
             zombie.simulationTime += dt;
 
@@ -192,7 +192,7 @@ namespace WalkerSim
 
                     ZombieAgent zombie = _inactiveZombies[i];
 
-                    UpdateInactiveZombie(zombie, dt, ev);
+                    UpdateInactiveZombie(zombie.Inactive, dt, ev);
 
                     //Log.Out("New Zombie Position: {0}, Target: {1}", zombie.pos, zombie.targetPos);
 

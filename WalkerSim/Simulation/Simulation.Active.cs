@@ -126,9 +126,9 @@ namespace WalkerSim
 
             world.SpawnEntityInWorld(zombieEnt);
 
-            zombie.entityId = zombieEnt.entityId;
-            zombie.currentZone = zone;
-            zombie.lifeTime = world.GetWorldTime();
+            zombie.Active.entityId = zombieEnt.entityId;
+            zombie.Active.currentZone = zone;
+            zombie.Active.lifeTime = world.GetWorldTime();
 
             zone.numZombies++;
 
@@ -188,23 +188,22 @@ namespace WalkerSim
             bool removeZombie = false;
 
             var worldTime = world.GetWorldTime();
-            var timeAlive = worldTime - zombie.lifeTime;
+            var timeAlive = worldTime - zombie.Active.lifeTime;
 
-            var currentZone = zombie.currentZone as PlayerZone;
+            var currentZone = zombie.Active.currentZone as PlayerZone;
             if (currentZone != null)
             {
                 currentZone.numZombies--;
                 if (currentZone.numZombies < 0)
                     currentZone.numZombies = 0;
             }
-            zombie.currentZone = null;
+            zombie.Active.currentZone = null;
 
-            Vector3 oldPos = new Vector3 { x = zombie.pos.x, y = zombie.pos.y, z = zombie.pos.z };
-            EntityZombie ent = world.GetEntity(zombie.entityId) as EntityZombie;
+            EntityZombie ent = world.GetEntity(zombie.Active.entityId) as EntityZombie;
             if (ent == null)
             {
 #if DEBUG
-                Log.Out("[WalkerSim] Failed to get zombie with entity id {0}", zombie.entityId);
+                Log.Out("[WalkerSim] Failed to get zombie with entity id {0}", zombie.Active.entityId);
 #endif
                 removeZombie = true;
                 RespawnInactiveZombie(zombie);
@@ -213,7 +212,7 @@ namespace WalkerSim
             {
                 zombie.pos = ent.GetPosition();
                 zombie.health = ((EntityZombie)ent).Health;
-                zombie.dir = -ent.rotation;
+                zombie.Inactive.dir = -ent.rotation;
 
                 if (ent.IsDead())
                 {
@@ -230,10 +229,10 @@ namespace WalkerSim
 #endif
                         removeZombie = true;
 
-                        world.RemoveEntity(zombie.entityId, EnumRemoveEntityReason.Despawned);
+                        world.RemoveEntity(zombie.Active.entityId, EnumRemoveEntityReason.Despawned);
 
-                        zombie.entityId = -1;
-                        zombie.currentZone = null;
+                        zombie.Active.entityId = -1;
+                        zombie.Active.currentZone = null;
 
                         TurnZombieInactive(zombie);
                     }
@@ -244,9 +243,9 @@ namespace WalkerSim
                             if (zone.numZombies + 1 < maxPerZone)
                             {
                                 zone.numZombies++;
-                                zombie.currentZone = zone;
+                                zombie.Active.currentZone = zone;
                                 // If the zombie is inside a player zone make sure we renew the life time.
-                                zombie.lifeTime = worldTime;
+                                zombie.Active.lifeTime = worldTime;
                                 break;
                             }
                         }
@@ -300,15 +299,16 @@ namespace WalkerSim
                     {
                         for (int i = 0; i < _activeZombies.Count; i++)
                         {
-                            ZombieAgent zombieAgent = _activeZombies[i];
+                            var zombieAgent = _activeZombies[i].Active;
                             EntityZombie entityZombie = world.GetEntity(zombieAgent.entityId) as EntityZombie;
 
                             // If zombie reached its target, send it somewhere
                             var distanceToTarget = Vector3.Distance(entityZombie.position, entityZombie.InvestigatePosition);
                             if (distanceToTarget <= 20.0f)
                             {
-                                var newTarget = ((zombieAgent.pos - zombieAgent.spawnPos).normalized * 2000) + zombieAgent.spawnPos;
-                                Log.Out($"[{zombieAgent.id}] Reached its target at {entityZombie.InvestigatePosition}.  Sending to {newTarget}");
+                                var newTarget = ((zombieAgent.Parent.pos - zombieAgent.spawnPos).normalized * 2000) + zombieAgent.spawnPos;
+                                Log.Out($"[{zombieAgent.Parent.id}] Reached its target at {entityZombie.InvestigatePosition}.  Sending to {newTarget}");
+                                entityZombie.ClearInvestigatePosition();
                                 entityZombie.SetInvestigatePosition(
                                     newTarget,
                                     6000,
@@ -316,7 +316,7 @@ namespace WalkerSim
                             }
                             else
                             {
-                                Log.Out($"[{zombieAgent.id}] was {distanceToTarget} away from its target");
+                                Log.Out($"[{zombieAgent.Parent.id}] was {distanceToTarget} away from its target");
                             }
                         }
                     }
