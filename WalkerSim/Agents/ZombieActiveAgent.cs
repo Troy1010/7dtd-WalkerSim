@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace WalkerSim
 {
-    class ZombieActiveAgent
+    class ZombieActiveAgent : IDisposable
     {
         public ZombieAgent Parent { get; }
         public int entityId = -1;
@@ -13,6 +14,10 @@ namespace WalkerSim
         public ZombieActiveAgent(ZombieAgent parent)
         {
             Parent = parent;
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

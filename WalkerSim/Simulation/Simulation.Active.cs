@@ -125,9 +125,10 @@ namespace WalkerSim
 
             world.SpawnEntityInWorld(zombieEnt);
 
-            zombie.Active.entityId = zombieEnt.entityId;
-            zombie.Active.currentZone = zone;
-            zombie.Active.lifeTime = world.GetWorldTime();
+            var active = zombie.MakeActive();
+            active.entityId = zombieEnt.entityId;
+            active.currentZone = zone;
+            active.lifeTime = world.GetWorldTime();
 
             zone.numZombies++;
 
@@ -263,10 +264,20 @@ namespace WalkerSim
                 {
                     var zombie = _activeZombies[i];
 
-                    var removeZombie = UpdateActiveZombie(zombie.Active);
+                    bool removeZombie;
+                    if (zombie.Active == null)
+                    {
+                        Log.Warning($"[WalkerSim] Tried to update ");
+                        removeZombie = true;
+                    }
+                    else
+                    {
+                        removeZombie = UpdateActiveZombie(zombie.Active);
+                    }
 
                     if (removeZombie)
                     {
+                        zombie.Deactivate();
                         _activeZombies.RemoveAt(i);
                         if (_activeZombies.Count == 0)
                             break;
@@ -294,6 +305,7 @@ namespace WalkerSim
                         for (int i = 0; i < _activeZombies.Count; i++)
                         {
                             var zombieAgent = _activeZombies[i].Active;
+                            if (zombieAgent == null) continue;
                             var entityZombie = (EntityZombie)world.GetEntity(zombieAgent.entityId);
 
                             // If zombie reached its target, send it somewhere

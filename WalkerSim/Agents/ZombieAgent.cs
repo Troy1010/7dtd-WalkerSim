@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace WalkerSim
 {
-    class ZombieAgent : IComparer, IEquatable<ZombieAgent>
+    class ZombieAgent : IComparer, IEquatable<ZombieAgent>, IDisposable
     {
         public enum State
         {
@@ -22,12 +21,11 @@ namespace WalkerSim
         public int health = -1;
         
         public ZombieInactiveAgent Inactive { get; }
-        public ZombieActiveAgent Active { get; }
+        public ZombieActiveAgent? Active { get; private set; }
 
         public ZombieAgent()
         {
             Inactive = new ZombieInactiveAgent(this);
-            Active = new ZombieActiveAgent(this);
         }
 
         int IComparer.Compare(object a, object b)
@@ -38,6 +36,24 @@ namespace WalkerSim
         public bool Equals(ZombieAgent other)
         {
             return id == other.id;
+        }
+
+        public ZombieActiveAgent MakeActive()
+        {
+            if (Active != null) throw new ArgumentException($"Tried to activate an already active zombie: {id}");
+            Active = new ZombieActiveAgent(this);
+            return Active;
+        }
+
+        public void Deactivate()
+        {
+            Active?.Dispose();
+            Active = null;
+        }
+
+        public void Dispose()
+        {
+            Active?.Dispose();
         }
     }
 }

@@ -244,6 +244,7 @@ namespace WalkerSim
 
                     if (removeZombie)
                     {
+                        zombie.Dispose();
                         _inactiveZombies.RemoveAt(i);
                         i--;
 
