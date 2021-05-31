@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace WalkerSim
 {
-    public class WorldZone : Zone
+    public class WorldZone : IZone
     {
         public int index = -1;
         public Vector3 mins = Vector3.zero;

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace WalkerSim
 {
-    public class POIZone : Zone
+    public class POIZone : IZone
     {
         public int index;
         public Vector3 mins;

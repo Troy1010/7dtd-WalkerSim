@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace WalkerSim
 {
-	public class TargetZone : Zone
+	public class TargetZone : IZone
 	{
 		static int BorderSize = 100;
 		static int ZoneSize = 10;

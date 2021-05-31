@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace WalkerSim
 {
-    public class PlayerZone : Zone
+    public class PlayerZone : IZone
     {
         public bool valid = true;
         public int index = -1;

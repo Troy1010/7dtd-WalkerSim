@@ -53,7 +53,7 @@ namespace WalkerSim
             }
         }
 
-        private Zone GetNextTarget(ZombieInactiveAgent zombie)
+        private IZone GetNextTarget(ZombieInactiveAgent zombie)
         {
             if (_prng.Chance(Config.Instance.POITravellerChance))
             {
@@ -62,7 +62,7 @@ namespace WalkerSim
             return _worldZones.GetRandom(_prng);
         }
 
-        private Vector3 GetTargetPos(Zone target)
+        private Vector3 GetTargetPos(IZone target)
         {
             return target.GetRandomPos(_prng);
         }

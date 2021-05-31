@@ -33,7 +33,7 @@ namespace WalkerSim
                 for (int i = 0; i < 4; i++)
                 {
                     var idx = prng.Get(0, _zones.Count);
-                    var zone = _zones[idx] as Zone;
+                    var zone = _zones[idx] as IZone;
                     if (zone.GetIndex() != lastIndex)
                     {
                         return (T)zone;
@@ -50,7 +50,7 @@ namespace WalkerSim
             {
                 foreach (var zone in _zones)
                 {
-                    var z = zone as Zone;
+                    var z = zone as IZone;
                     if (z.IsInside2D(pos))
                         return (T)zone;
                 }
@@ -65,7 +65,7 @@ namespace WalkerSim
             {
                 foreach (var zone in _zones)
                 {
-                    var z = zone as Zone;
+                    var z = zone as IZone;
                     if (z.IsInside2D(pos))
                     {
                         res.Add((T)zone);
@@ -75,7 +75,7 @@ namespace WalkerSim
             return res;
         }
 
-        public T GetRandomClosest(Vector3 pos, PRNG prng, float maxDistance, List<Zone> excluded, int numAttempts = 5)
+        public T GetRandomClosest(Vector3 pos, PRNG prng, float maxDistance, List<IZone> excluded, int numAttempts = 5)
         {
             lock (_lock)
             {
@@ -87,7 +87,7 @@ namespace WalkerSim
                 T res = default(T);
                 for (int i = 0; i < numAttempts; i++)
                 {
-                    var zone = GetRandom(prng) as Zone;
+                    var zone = GetRandom(prng) as IZone;
                     if (excluded != null && excluded.Contains(zone))
                     {
                         continue;
@@ -117,7 +117,7 @@ namespace WalkerSim
                 T res = default(T);
                 for (int i = 0; i < _zones.Count; i++)
                 {
-                    var zone = _zones[i] as Zone;
+                    var zone = _zones[i] as IZone;
                     float dist = Vector3.Distance(zone.GetCenter(), pos);
                     if (dist < bestDistance)
                     {

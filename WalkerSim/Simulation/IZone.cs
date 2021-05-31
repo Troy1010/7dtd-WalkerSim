@@ -10,7 +10,7 @@ namespace WalkerSim
         World,
     }
 
-    public interface Zone
+    public interface IZone
     {
         ZoneType GetZoneType();
 

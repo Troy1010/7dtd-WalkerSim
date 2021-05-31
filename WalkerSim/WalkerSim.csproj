@@ -59,7 +59,7 @@
     <Compile Include="Simulation\TargetZone.cs" />
     <Compile Include="Simulation\WorldState.cs" />
     <Compile Include="Simulation\WorldZone.cs" />
-    <Compile Include="Simulation\Zone.cs" />
+    <Compile Include="Simulation\IZone.cs" />
     <Compile Include="Simulation\ZoneManager.cs" />
     <Compile Include="Simulation\ViewServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

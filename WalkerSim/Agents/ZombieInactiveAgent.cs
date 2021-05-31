@@ -11,8 +11,8 @@ namespace WalkerSim
         const int MaxVisitedHistory = 5;
 
         public Vector3 targetPos = new Vector3();
-        public Zone target = null;
-        public List<Zone> visitedZones = new List<Zone>();
+        public IZone target = null;
+        public List<IZone> visitedZones = new List<IZone>();
         public float simulationTime = 0.0f;
 
         public ZombieInactiveAgent(ZombieAgent parent)
@@ -32,7 +32,7 @@ namespace WalkerSim
             return false;
         }
 
-        public void AddVisitedZone(Zone zone)
+        public void AddVisitedZone(IZone zone)
         {
             if (zone == null)
                 return;
@@ -43,7 +43,7 @@ namespace WalkerSim
                 visitedZones.RemoveAt(0);
         }
 
-        public bool HasVisitedZone(Zone zone)
+        public bool HasVisitedZone(IZone zone)
         {
             return visitedZones.Contains(zone);
         }
