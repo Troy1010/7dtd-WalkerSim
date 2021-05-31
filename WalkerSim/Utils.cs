@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
 namespace WalkerSim
 {
-    public class Utils
+    public static class Utils
     {
         public static float Remap(float s, float a1, float a2, float b1, float b2)
         {
@@ -28,6 +29,11 @@ namespace WalkerSim
         public static float Distance(float a, float b)
         {
             return Math.Max(a, b) - Math.Min(a, b);
+        }
+
+        public static void DisposeWith(this IDisposable disposable, CompositeDisposable composite)
+        {
+            composite.Add(disposable);
         }
     }
 }

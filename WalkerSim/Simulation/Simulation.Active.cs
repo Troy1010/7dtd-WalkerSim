@@ -287,46 +287,5 @@ namespace WalkerSim
                 }
             }
         }
-
-        void RegisterActiveZombieLogic()
-        {
-            RegisterLeaveAfterReachingTarget();
-        }
-
-        void RegisterLeaveAfterReachingTarget()
-        {
-            var world = GameManager.Instance.World;
-            Observable.Interval(TimeSpan.FromSeconds(5))
-                .ObserveOn(MyScheduler.Instance)
-                .Subscribe(it =>
-                {
-                    lock (_activeZombies)
-                    {
-                        for (int i = 0; i < _activeZombies.Count; i++)
-                        {
-                            var zombieAgent = _activeZombies[i].Active;
-                            if (zombieAgent == null) continue;
-                            var entityZombie = (EntityZombie)world.GetEntity(zombieAgent.entityId);
-
-                            // If zombie reached its target, send it somewhere
-                            var distanceToTarget = Vector3.Distance(entityZombie.position, entityZombie.InvestigatePosition);
-                            if (distanceToTarget <= 20.0f)
-                            {
-                                var newTarget = ((zombieAgent.Parent.pos - zombieAgent.spawnPos).normalized * 2000) + zombieAgent.spawnPos;
-                                Log.Out($"[{zombieAgent.Parent.id}] Reached its target at {entityZombie.InvestigatePosition}.  Sending to {newTarget}");
-                                entityZombie.ClearInvestigatePosition();
-                                entityZombie.SetInvestigatePosition(
-                                    newTarget,
-                                    6000,
-                                    false);
-                            }
-                            else
-                            {
-                                Log.Out($"[{zombieAgent.Parent.id}] was {distanceToTarget} away from its target");
-                            }
-                        }
-                    }
-                });
-        }
     }
 }
