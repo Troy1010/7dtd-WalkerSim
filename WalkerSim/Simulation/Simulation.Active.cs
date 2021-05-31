@@ -177,7 +177,7 @@ namespace WalkerSim
             return MaxSpawnedZombies / Math.Max(1, ConnectionManager.Instance.Clients.Count);
         }
 
-        bool UpdateActiveZombie(ZombieAgent zombie)
+        bool UpdateActiveZombie(ZombieActiveAgent zombie)
         {
             var world = GameManager.Instance.World;
             int maxPerZone = MaxZombiesPerZone();
@@ -185,33 +185,33 @@ namespace WalkerSim
             bool removeZombie = false;
 
             var worldTime = world.GetWorldTime();
-            var timeAlive = worldTime - zombie.Active.lifeTime;
+            var timeAlive = worldTime - zombie.lifeTime;
 
-            if (zombie.Active.currentZone is PlayerZone currentZone)
+            if (zombie.currentZone is PlayerZone currentZone)
             {
                 currentZone.numZombies--;
                 if (currentZone.numZombies < 0)
                     currentZone.numZombies = 0;
             }
-            zombie.Active.currentZone = null;
+            zombie.currentZone = null;
 
-            if (world.GetEntity(zombie.Active.entityId) is not EntityZombie ent)
+            if (world.GetEntity(zombie.entityId) is not EntityZombie ent)
             {
 #if DEBUG
-                Log.Out("[WalkerSim] Failed to get zombie with entity id {0}", zombie.Active.entityId);
+                Log.Out("[WalkerSim] Failed to get zombie with entity id {0}", zombie.entityId);
 #endif
                 removeZombie = true;
-                RespawnInactiveZombie(zombie);
+                RespawnInactiveZombie(zombie.Parent);
             }
             else
             {
-                zombie.pos = ent.GetPosition();
-                zombie.health = ent.Health;
+                zombie.Parent.pos = ent.GetPosition();
+                zombie.Parent.health = ent.Health;
 
                 if (ent.IsDead())
                 {
                     removeZombie = true;
-                    RespawnInactiveZombie(zombie);
+                    RespawnInactiveZombie(zombie.Parent);
                 }
                 else
                 {
@@ -223,12 +223,12 @@ namespace WalkerSim
 #endif
                         removeZombie = true;
 
-                        world.RemoveEntity(zombie.Active.entityId, EnumRemoveEntityReason.Despawned);
+                        world.RemoveEntity(zombie.entityId, EnumRemoveEntityReason.Despawned);
 
-                        zombie.Active.entityId = -1;
-                        zombie.Active.currentZone = null;
+                        zombie.entityId = -1;
+                        zombie.currentZone = null;
 
-                        TurnZombieInactive(zombie);
+                        TurnZombieInactive(zombie.Parent);
                     }
                     else
                     {
@@ -237,9 +237,9 @@ namespace WalkerSim
                             if (zone.numZombies + 1 < maxPerZone)
                             {
                                 zone.numZombies++;
-                                zombie.Active.currentZone = zone;
+                                zombie.currentZone = zone;
                                 // If the zombie is inside a player zone make sure we renew the life time.
-                                zombie.Active.lifeTime = worldTime;
+                                zombie.lifeTime = worldTime;
                                 break;
                             }
                         }
@@ -263,7 +263,7 @@ namespace WalkerSim
                 {
                     var zombie = _activeZombies[i];
 
-                    var removeZombie = UpdateActiveZombie(zombie);
+                    var removeZombie = UpdateActiveZombie(zombie.Active);
 
                     if (removeZombie)
                     {

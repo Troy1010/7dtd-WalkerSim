@@ -6,9 +6,9 @@ namespace WalkerSim
 {
     partial class Simulation
     {
-        List<ZombieAgent> _inactiveZombies = new List<ZombieAgent>();
-        Dictionary<Vector2i, int> _zoneCounter = new Dictionary<Vector2i, int>();
-        Queue<ZombieAgent> _inactiveQueue = new Queue<ZombieAgent>();
+        List<ZombieAgent> _inactiveZombies = new();
+        Dictionary<Vector2i, int> _zoneCounter = new();
+        Queue<ZombieAgent> _inactiveQueue = new();
 
         void CreateInactiveRoaming()
         {
