@@ -9,7 +9,7 @@ namespace WalkerSim
     public class State
     {
         public delegate void OnChangeDelegate();
-        public event OnChangeDelegate OnChange;
+        public event OnChangeDelegate? OnChange;
 
         static int ZombieMoveDay = GamePrefs.GetInt(EnumGamePrefs.ZombieMove);
         static int ZombieMoveNight = GamePrefs.GetInt(EnumGamePrefs.ZombieMoveNight);

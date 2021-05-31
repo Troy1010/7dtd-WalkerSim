@@ -38,7 +38,7 @@ namespace WalkerSim
             _playerZones.Update();
         }
 
-        POIZone GetNextPOI(ZombieInactiveAgent zombie)
+        POIZone? GetNextPOI(ZombieInactiveAgent zombie)
         {
             var closest = _pois.GetRandomClosest(zombie.Parent.pos, _prng, 500, zombie.visitedZones);
             if (closest == null)

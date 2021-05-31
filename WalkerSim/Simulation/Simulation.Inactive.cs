@@ -30,7 +30,7 @@ namespace WalkerSim
             }
         }
 
-        void ProcessWorldEvent(ZombieInactiveAgent zombie, WorldEvent ev)
+        void ProcessWorldEvent(ZombieInactiveAgent zombie, WorldEvent? ev)
         {
             if (ev == null)
                 return;
@@ -53,7 +53,7 @@ namespace WalkerSim
             }
         }
 
-        private IZone GetNextTarget(ZombieInactiveAgent zombie)
+        private IZone? GetNextTarget(ZombieInactiveAgent zombie)
         {
             if (_prng.Chance(Config.Instance.POITravellerChance))
             {
@@ -107,8 +107,15 @@ namespace WalkerSim
                 zombie.target = GetNextTarget(zombie);
             }
 
-            zombie.targetPos = GetTargetPos(zombie.target);
-            zombie.Parent.state = ZombieAgent.State.Wandering;
+            if (zombie.target != null)
+            {
+                zombie.targetPos = GetTargetPos(zombie.target);
+                zombie.Parent.state = ZombieAgent.State.Wandering;
+            }
+            else
+            {
+                Log.Warning($"{zombie.Parent.id} had no target!");
+            }
         }
 
         void UpdateApproachTarget(ZombieInactiveAgent zombie, float dt)
@@ -131,7 +138,7 @@ namespace WalkerSim
             zombie.Parent.pos = Vector3.MoveTowards(zombie.Parent.pos, zombie.targetPos + offset, speed);
         }
 
-        void UpdateInactiveZombie(ZombieInactiveAgent zombie, float dt, WorldEvent ev)
+        void UpdateInactiveZombie(ZombieInactiveAgent zombie, float dt, WorldEvent? ev)
         {
             zombie.simulationTime += dt;
 
@@ -160,7 +167,7 @@ namespace WalkerSim
             int maxUpdates = _maxZombies;
             int maxPerZone = MaxZombiesPerZone();
 
-            WorldEvent ev = null;
+            WorldEvent? ev = null;
             lock (_worldEvents)
             {
                 if (_worldEvents.Count > 0)

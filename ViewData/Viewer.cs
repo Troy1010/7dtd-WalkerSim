@@ -78,6 +78,7 @@ namespace WalkerSim.Viewer
         public int id;
         public int x;
         public int y;
+        
         public void Serialize(Stream stream)
         {
             Write(stream, id);
@@ -100,6 +101,7 @@ namespace WalkerSim.Viewer
         public int y1;
         public int x2;
         public int y2;
+        
         public virtual void Serialize(Stream stream)
         {
             Write(stream, x1);
@@ -172,6 +174,7 @@ namespace WalkerSim.Viewer
             Write(stream, zombieSpeed);
             Write(stream, timescale);
         }
+        
         public void Deserialize(Stream stream)
         {
             Read(stream, out w);
@@ -186,18 +189,18 @@ namespace WalkerSim.Viewer
 
     public class WorldZones : Base, IWalkerSimMessage
     {
-        public List<DataWorldZone> zones;
+        public List<DataWorldZone> zones = new();
+        
         public void Serialize(Stream stream)
         {
-            var list = zones;
-            int len = list == null ? 0 : list.Count;
-            Write(stream, len);
-            for (int i = 0; i < len; i++)
+            Write(stream, zones.Count);
+            for (int i = 0; i < zones.Count; i++)
             {
-                var e = list[i];
+                var e = zones[i];
                 e.Serialize(stream);
             }
         }
+        
         public void Deserialize(Stream stream)
         {
             var list = new List<DataWorldZone>();
@@ -215,19 +218,18 @@ namespace WalkerSim.Viewer
 
     public class POIZones : Base, IWalkerSimMessage
     {
-        public List<DataPOIZone> zones;
+        public List<DataPOIZone> zones = new();
 
         public void Serialize(Stream stream)
         {
-            var list = zones;
-            int len = list == null ? 0 : list.Count;
-            Write(stream, len);
-            for (int i = 0; i < len; i++)
+            Write(stream, zones.Count);
+            for (int i = 0; i < zones.Count; i++)
             {
-                var e = list[i];
+                var e = zones[i];
                 e.Serialize(stream);
             }
         }
+        
         public void Deserialize(Stream stream)
         {
             var list = new List<DataPOIZone>();
@@ -245,19 +247,18 @@ namespace WalkerSim.Viewer
 
     public class PlayerZones : Base, IWalkerSimMessage
     {
-        public List<DataPlayerZone> zones;
+        public List<DataPlayerZone> zones = new();
 
         public void Serialize(Stream stream)
         {
-            var list = zones;
-            int len = list == null ? 0 : list.Count;
-            Write(stream, len);
-            for (int i = 0; i < len; i++)
+            Write(stream, zones.Count);
+            for (int i = 0; i < zones.Count; i++)
             {
-                var e = list[i];
+                var e = zones[i];
                 e.Serialize(stream);
             }
         }
+        
         public void Deserialize(Stream stream)
         {
             var list = new List<DataPlayerZone>();
@@ -275,18 +276,18 @@ namespace WalkerSim.Viewer
 
     public class ZombieList : Base, IWalkerSimMessage
     {
-        public List<DataZombie> list;
+        public List<DataZombie> list = new();
 
         public void Serialize(Stream stream)
         {
-            int len = list == null ? 0 : list.Count;
-            Write(stream, len);
-            for (int i = 0; i < len; i++)
+            Write(stream, list.Count);
+            for (int i = 0; i < list.Count; i++)
             {
                 var e = list[i];
                 e.Serialize(stream);
             }
         }
+        
         public void Deserialize(Stream stream)
         {
             var res = new List<DataZombie>();
@@ -313,6 +314,7 @@ namespace WalkerSim.Viewer
             Write(stream, y);
             Write(stream, distance);
         }
+        
         public void Deserialize(Stream stream)
         {
             Read(stream, out x);

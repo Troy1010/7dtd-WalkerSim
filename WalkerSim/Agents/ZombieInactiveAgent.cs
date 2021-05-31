@@ -11,7 +11,7 @@ namespace WalkerSim
         const int MaxVisitedHistory = 5;
 
         public Vector3 targetPos = new Vector3();
-        public IZone target = null;
+        public IZone? target = null;
         public List<IZone> visitedZones = new List<IZone>();
         public float simulationTime = 0.0f;
 
@@ -32,7 +32,7 @@ namespace WalkerSim
             return false;
         }
 
-        public void AddVisitedZone(IZone zone)
+        public void AddVisitedZone(IZone? zone)
         {
             if (zone == null)
                 return;

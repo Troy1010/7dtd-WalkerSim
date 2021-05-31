@@ -29,7 +29,7 @@ namespace WalkerSim
             return ScaleCoord((float)v);
         }
 
-        Bitmap GetBitmap(State state)
+        Bitmap? GetBitmap(State state)
         {
             int topBorderSize = 14;
 
@@ -177,7 +177,7 @@ namespace WalkerSim
             var state = _client.GetMapData();
             if (state != null)
             {
-                Bitmap bm = GetBitmap(state);
+                Bitmap? bm = GetBitmap(state);
                 if (mapImage.Image != null)
                     mapImage.Image.Dispose();
                 if (bm != null)

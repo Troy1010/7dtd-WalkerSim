@@ -146,8 +146,7 @@ namespace WalkerSim
             var world = GameManager.Instance.World;
             var players = world.Players.dict;
 
-            EntityPlayer ent = null;
-            if (players.TryGetValue(entityId, out ent))
+            if (players.TryGetValue(entityId, out var ent))
             {
                 ply = UpdatePlayer(ply, ent);
             }
@@ -164,10 +163,9 @@ namespace WalkerSim
 
                 for (int i = 0; i < _zones.Count; i++)
                 {
-                    var ply = _zones[i] as PlayerZone;
+                    var ply = _zones[i];
 
-                    EntityPlayer ent = null;
-                    if (players.TryGetValue(ply.entityId, out ent))
+                    if (players.TryGetValue(ply.entityId, out var ent))
                     {
                         _zones[i] = UpdatePlayer(ply, ent);
                     }

@@ -8,8 +8,8 @@ namespace WalkerSim
 {
     partial class Simulation
     {
-        List<ZombieAgent> _activeZombies = new List<ZombieAgent>();
-        Queue<ZombieSpawnRequest> _spawnQueue = new Queue<ZombieSpawnRequest>();
+        List<ZombieAgent> _activeZombies = new();
+        Queue<ZombieSpawnRequest> _spawnQueue = new();
         
         bool IsSpawnProtected(Vector3 pos)
         {
@@ -58,7 +58,7 @@ namespace WalkerSim
             }
 
             var world = GameManager.Instance.World;
-            Chunk chunk = (Chunk)world.GetChunkSync(World.toChunkXZ(Mathf.FloorToInt(zombie.pos.x)), 0, World.toChunkXZ(Mathf.FloorToInt(zombie.pos.z)));
+            Chunk? chunk = world.GetChunkSync(World.toChunkXZ(Mathf.FloorToInt(zombie.pos.x)), 0, World.toChunkXZ(Mathf.FloorToInt(zombie.pos.z))) as Chunk;
             if (chunk == null)
             {
 #if DEBUG
@@ -91,8 +91,7 @@ namespace WalkerSim
                 }
             }
 
-            EntityZombie zombieEnt = EntityFactory.CreateEntity(zombie.classId, spawnPos) as EntityZombie;
-            if (zombieEnt == null)
+            if (EntityFactory.CreateEntity(zombie.classId, spawnPos) is not EntityZombie zombieEnt)
             {
 #if DEBUG
                 Log.Error("[WalkerSim] Unable to create zombie entity!, Entity Id: {0}, Pos: {1}", zombie.classId, spawnPos);
@@ -147,9 +146,7 @@ namespace WalkerSim
         {
             zombie.state = ZombieAgent.State.Active;
 
-            ZombieSpawnRequest spawn = new ZombieSpawnRequest();
-            spawn.zombie = zombie;
-            spawn.zone = zone;
+            ZombieSpawnRequest spawn = new(zombie, zone);
             lock (_spawnQueue)
             {
                 _spawnQueue.Enqueue(spawn);
@@ -160,7 +157,7 @@ namespace WalkerSim
         {
             for (int i = 0; i < MaxZombieSpawnsPerTick; i++)
             {
-                ZombieSpawnRequest zombieSpawn = null;
+                ZombieSpawnRequest zombieSpawn;
                 lock (_spawnQueue)
                 {
                     if (_spawnQueue.Count == 0)
@@ -190,8 +187,7 @@ namespace WalkerSim
             var worldTime = world.GetWorldTime();
             var timeAlive = worldTime - zombie.Active.lifeTime;
 
-            var currentZone = zombie.Active.currentZone as PlayerZone;
-            if (currentZone != null)
+            if (zombie.Active.currentZone is PlayerZone currentZone)
             {
                 currentZone.numZombies--;
                 if (currentZone.numZombies < 0)
@@ -199,8 +195,7 @@ namespace WalkerSim
             }
             zombie.Active.currentZone = null;
 
-            EntityZombie ent = world.GetEntity(zombie.Active.entityId) as EntityZombie;
-            if (ent == null)
+            if (world.GetEntity(zombie.Active.entityId) is not EntityZombie ent)
             {
 #if DEBUG
                 Log.Out("[WalkerSim] Failed to get zombie with entity id {0}", zombie.Active.entityId);
@@ -211,7 +206,7 @@ namespace WalkerSim
             else
             {
                 zombie.pos = ent.GetPosition();
-                zombie.health = ((EntityZombie)ent).Health;
+                zombie.health = ent.Health;
 
                 if (ent.IsDead())
                 {
@@ -299,7 +294,7 @@ namespace WalkerSim
                         for (int i = 0; i < _activeZombies.Count; i++)
                         {
                             var zombieAgent = _activeZombies[i].Active;
-                            EntityZombie entityZombie = world.GetEntity(zombieAgent.entityId) as EntityZombie;
+                            var entityZombie = (EntityZombie)world.GetEntity(zombieAgent.entityId);
 
                             // If zombie reached its target, send it somewhere
                             var distanceToTarget = Vector3.Distance(entityZombie.position, entityZombie.InvestigatePosition);

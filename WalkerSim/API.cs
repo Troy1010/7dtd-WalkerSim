@@ -13,7 +13,7 @@ namespace WalkerSim
 
         public static int MaxPlayers = GamePrefs.GetInt(EnumGamePrefs.ServerMaxPlayerCount);
 
-        public static Simulation _sim = null;
+        public static Simulation _sim = null!;
         static DateTime _nextOutputTime = DateTime.Now;
         static MicroStopwatch _stopWatch = new MicroStopwatch();
         public API()

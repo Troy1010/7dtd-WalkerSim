@@ -25,13 +25,13 @@ namespace WalkerSim
 
     public class State
     {
-        public Viewer.State worldInfo = new Viewer.State();
-        public Viewer.WorldZones worldZones = new Viewer.WorldZones();
-        public Viewer.POIZones poiZones = new Viewer.POIZones();
-        public Viewer.PlayerZones playerZones = new Viewer.PlayerZones();
-        public Viewer.ZombieList inactive = new Viewer.ZombieList();
-        public Viewer.ZombieList active = new Viewer.ZombieList();
-        public List<SoundEvent> sounds = new List<SoundEvent>();
+        public Viewer.State worldInfo = new();
+        public Viewer.WorldZones worldZones = new();
+        public Viewer.POIZones poiZones = new();
+        public Viewer.PlayerZones playerZones = new();
+        public Viewer.ZombieList inactive = new();
+        public Viewer.ZombieList active = new();
+        public List<SoundEvent> sounds = new();
     }
 
     class ViewerClient
@@ -40,11 +40,11 @@ namespace WalkerSim
         private bool _connecting = false;
         private string _host = "";
         private int _port = 0;
-        private State _worldState;
+        private State? _worldState;
 
         public void Update()
         {
-            if (_worldState != null && _worldState.sounds != null)
+            if (_worldState?.sounds != null)
             {
                 for (int i = 0; i < _worldState.sounds.Count; i++)
                 {
@@ -59,7 +59,7 @@ namespace WalkerSim
             }
         }
 
-        public State GetMapData()
+        public State? GetMapData()
         {
             if (_connecting || !_client.sock.Connected)
                 return null;

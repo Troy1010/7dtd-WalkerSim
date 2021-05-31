@@ -5,7 +5,6 @@ namespace WalkerSim
 {
     partial class Simulation
     {
-
         public Vector2i WorldToBitmap(Vector3 pos)
         {
             Vector2i res = new Vector2i();
@@ -14,7 +13,7 @@ namespace WalkerSim
             return res;
         }
 
-        void SendState(ViewServer sender, ViewServer.Client cl)
+        void SendState(ViewServer sender, ViewServer.Client? cl)
         {
             if (sender == null)
                 return;
@@ -40,30 +39,39 @@ namespace WalkerSim
             if (zones.Count == 0)
                 return;
 
-            var data = new Viewer.POIZones();
+            var data = new Viewer.POIZones()
+            {
+                zones = zones
+            };
             data.zones = zones;
             sender.SendData(cl, Viewer.DataType.POIZones, data);
         }
+        
         void SendWorldZones(ViewServer sender, ViewServer.Client cl)
         {
             if (sender == null)
                 return;
 
-            var data = new Viewer.WorldZones();
-            data.zones = _worldZones.GetSerializable(this);
+            var data = new Viewer.WorldZones()
+            {
+                zones = _worldZones.GetSerializable(this)
+            };
             sender.SendData(cl, Viewer.DataType.WorldZones, data);
         }
-        void SendPlayerZones(ViewServer sender, ViewServer.Client cl)
+        
+        void SendPlayerZones(ViewServer sender, ViewServer.Client? cl)
         {
             if (sender == null)
                 return;
 
-            var data = new Viewer.PlayerZones();
-            data.zones = _playerZones.GetSerializable(this);
+            var data = new Viewer.PlayerZones()
+            {
+                zones = _playerZones.GetSerializable(this)
+            };
             sender.SendData(cl, Viewer.DataType.PlayerZones, data);
         }
 
-        void SendInactiveZombieList(ViewServer sender, ViewServer.Client cl)
+        void SendInactiveZombieList(ViewServer sender, ViewServer.Client? cl)
         {
             if (sender == null)
                 return;
@@ -85,14 +93,16 @@ namespace WalkerSim
                     });
                 }
 
-                var data = new Viewer.ZombieList();
-                data.list = list;
+                var data = new Viewer.ZombieList()
+                {
+                    list = list
+                };
 
                 sender.SendData(cl, Viewer.DataType.InactiveZombies, data);
             }
         }
 
-        void SendActiveZombieList(ViewServer sender, ViewServer.Client cl)
+        void SendActiveZombieList(ViewServer sender, ViewServer.Client? cl)
         {
             if (sender == null)
                 return;
@@ -111,8 +121,10 @@ namespace WalkerSim
                     });
                 }
 
-                var data = new Viewer.ZombieList();
-                data.list = list;
+                var data = new Viewer.ZombieList()
+                {
+                    list = list
+                };
 
                 sender.SendData(cl, Viewer.DataType.ActiveZombies, data);
             }

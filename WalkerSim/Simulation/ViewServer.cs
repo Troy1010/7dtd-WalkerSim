@@ -10,18 +10,23 @@ namespace WalkerSim
     {
         public class Client
         {
-            public Socket sock;
+            public readonly Socket sock;
             public bool disconnected;
+
+            public Client(Socket sock)
+            {
+                this.sock = sock;
+            }
         }
 
-        private Socket _listener = null;
+        private Socket _listener = null!;
         private List<Client> _clients = new List<Client>();
 
         public delegate void OnClientConnectedDelegate(ViewServer sender, Client client);
         public delegate void OnClientDisconnectedDelegate(ViewServer sender, Client client);
 
-        public event OnClientConnectedDelegate OnClientConnected;
-        public event OnClientDisconnectedDelegate OnClientDisconnected;
+        public event OnClientConnectedDelegate? OnClientConnected;
+        public event OnClientDisconnectedDelegate? OnClientDisconnected;
 
         public bool Start(int port)
         {
@@ -51,8 +56,7 @@ namespace WalkerSim
 
             try
             {
-                Client client = new Client();
-                client.sock = listener.EndAccept(ar);
+                Client client = new(listener.EndAccept(ar));
                 client.disconnected = false;
 
                 _clients.Add(client);
@@ -152,7 +156,7 @@ namespace WalkerSim
             }
         }
 
-        public void SendData(Client cl, Viewer.DataType type, Viewer.IWalkerSimMessage data)
+        public void SendData(Client? cl, Viewer.DataType type, Viewer.IWalkerSimMessage data)
         {
             if (cl == null)
             {
@@ -191,10 +195,10 @@ namespace WalkerSim
             if (_clients.Count == 0)
                 return;
 
-            MemoryStream streamBody = new MemoryStream();
+            var streamBody = new MemoryStream();
             data.Serialize(streamBody);
 
-            Viewer.Header header = new Viewer.Header();
+            var header = new Viewer.Header();
             header.type = (int)type;
             header.len = (int)streamBody.Length;
 

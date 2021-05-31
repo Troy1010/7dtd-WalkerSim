@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using System.IO;
-using System.Globalization;
 
 namespace WalkerSim
 {
     class ZombieSpawnRequest
     {
-        public ZombieAgent zombie;
-        public PlayerZone zone;
+        public readonly ZombieAgent zombie;
+        public readonly PlayerZone zone;
+
+        public ZombieSpawnRequest(ZombieAgent zombie, PlayerZone zone)
+        {
+            this.zombie = zombie;
+            this.zone = zone;
+        }
     }
 
     public partial class Simulation
@@ -220,9 +224,9 @@ namespace WalkerSim
             {
                 using (Stream stream = File.Open(SimulationFile, FileMode.Open))
                 {
-                    BinaryFormatter formatter = new BinaryFormatter();
+                    BinaryFormatter formatter = new();
 
-                    Config config = formatter.Deserialize(stream) as Config;
+                    var config = (Config)formatter.Deserialize(stream);
                     if (!config.Equals(Config.Instance))
                     {
                         Log.Out("[WalkerSim] Configuration changed, not loading save.");
@@ -231,7 +235,7 @@ namespace WalkerSim
 
                     lock (_inactiveZombies)
                     {
-                        List<ZombieData> data = formatter.Deserialize(stream) as List<ZombieData>;
+                        var data = (List<ZombieData>)formatter.Deserialize(stream);
                         if (data.Count > 0)
                         {
                             _inactiveZombies.Clear();
@@ -325,7 +329,7 @@ namespace WalkerSim
             double nextReport = 10.0;
             float updateRate = 1.0f / (float)Config.Instance.UpdateInterval;
 
-            BackgroundWorker worker = sender as BackgroundWorker;
+            var worker = (BackgroundWorker)sender;
             while (worker.CancellationPending == false)
             {
 #if DEBUG
