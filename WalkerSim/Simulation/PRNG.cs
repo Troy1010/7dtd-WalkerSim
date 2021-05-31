@@ -10,6 +10,10 @@ namespace WalkerSim
 	{
 		private Random _rand = new Random();
 
+		public PRNG()
+		{
+		}
+
 		public PRNG(int seed)
 		{
 			Seed(seed);

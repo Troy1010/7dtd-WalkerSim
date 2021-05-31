@@ -35,5 +35,22 @@ namespace WalkerSim
         {
             composite.Add(disposable);
         }
+
+        public static async void FireAndForget(this Task task, Action<Exception> onException)
+        {
+            try
+            {
+                await task;
+            }
+            catch (Exception e)
+            {
+                onException(e);
+            }
+        }
+
+        public static async void FireAndForget(this Task task)
+        {
+            task.FireAndForget(e => Log.Error("Error in task {0}", e));
+        }
     }
 }

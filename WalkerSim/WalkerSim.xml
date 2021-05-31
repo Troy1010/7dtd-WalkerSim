@@ -58,6 +58,13 @@
   <PopulationDensity>60</PopulationDensity>
 
   <!--
+    When zombies are active and spawned, and have reached their target location within the spawned area,
+    how long should they idle before leaving to go to their original long distance goal?
+    -->
+  <MinIdleSeconds>30</MinIdleSeconds>
+  <MaxIdleSeconds>240</MaxIdleSeconds>
+
+  <!--
     This controls the sound distance that notifies offline zombies when being fired.
     -->
   <SoundInfo>

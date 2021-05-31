@@ -102,15 +102,16 @@ namespace WalkerSim
             zombieEnt.bIsChunkObserver = true;
 
             // TODO: Figure out a better way to make them walk towards something.
-            if (true)
+            // Send zombie towards a random position in the zone.
+            Vector3 targetPos = GetRandomZonePos(zone);
+            if (targetPos == Vector3.zero)
             {
-                // Send zombie towards a random position in the zone.
-                Vector3 targetPos = GetRandomZonePos(zone);
-                if (targetPos == Vector3.zero)
-                    zombieEnt.SetInvestigatePosition(zone.center, 6000, false);
-                else
-                    zombieEnt.SetInvestigatePosition(targetPos, 6000, false);
+#if DEBUG
+                Log.Error("[WalkerSim] Had to send zombie to center zone.");
+#endif
+                targetPos = zone.center;
             }
+            zombieEnt.SetInvestigatePosition(targetPos, 6000, false);
 
             // If the zombie was previously damaged take health to this one.
             if (zombie.health != -1)
@@ -129,6 +130,7 @@ namespace WalkerSim
             active.entityId = zombieEnt.entityId;
             active.currentZone = zone;
             active.lifeTime = world.GetWorldTime();
+            active.intendedGoal = targetPos;
 
             zone.numZombies++;
 

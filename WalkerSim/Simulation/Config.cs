@@ -12,41 +12,28 @@ namespace WalkerSim
     {
         public static Config Instance = new Config();
 
-        public int UpdateInterval { get; private set; }
-        public bool PauseWithoutPlayers { get; private set; }
-        public int SpinupTicks { get; private set; }
-        public bool Persistent { get; private set; }
-        public int WorldZoneDivider { get; private set; }
-        public float POITravellerChance { get; private set; }
-        public int PopulationDensity { get; private set; }
+        public int UpdateInterval { get; private set; } = 60;
+        public bool PauseWithoutPlayers { get; private set; } = true;
+        public int SpinupTicks { get; private set; } = 10000;
+        public bool Persistent { get; private set; } = true;
+        public int WorldZoneDivider { get; private set; } = 32;
+        public float POITravellerChance { get; private set; } = 0.75f;
+        public int PopulationDensity { get; private set; } = 40;
         public bool EnableViewServer { get; private set; }
-        public int ViewServerPort { get; private set; }
-        public float WalkSpeedScale { get; private set; }
-        public float ReservedSpawns { get; private set; }
-        public bool PauseDuringBloodmon { get; private set; }
+        public int ViewServerPort { get; private set; } = 13632;
+        public float WalkSpeedScale { get; private set; } = 1.0f;
+        public float ReservedSpawns { get; private set; } = 0.5f;
+        public bool PauseDuringBloodmon { get; private set; } = false;
+        public int MinIdleSeconds { get; private set; } = 30;
+        public int MaxIdleSeconds { get; private set; } = 240;
 
-        public Dictionary<string, float> SoundDistance { get; private set; }
+        public Dictionary<string, float> SoundDistance { get; private set; } = new();
 
         public Config()
         {
-            UpdateInterval = 60;
-            PauseWithoutPlayers = true;
-            SpinupTicks = 10000;
-            WorldZoneDivider = 32;
-            POITravellerChance = 0.75f;
-            PopulationDensity = 40;
-            Persistent = true;
-            WalkSpeedScale = 1.0f;
-            ReservedSpawns = 0.5f;
-            PauseDuringBloodmon = false;
-            SoundDistance = new Dictionary<string, float>();
-
 #if DEBUG
             EnableViewServer = true;
-#else
-            EnableViewServer = false;
 #endif
-            ViewServerPort = 13632;
         }
 
         public bool Equals(Config other)
@@ -69,6 +56,10 @@ namespace WalkerSim
             if (ReservedSpawns != other.ReservedSpawns)
                 return false;
             if (PauseDuringBloodmon != other.PauseDuringBloodmon)
+                return false;
+            if (MinIdleSeconds != other.MinIdleSeconds)
+                return false;
+            if (MaxIdleSeconds != other.MaxIdleSeconds)
                 return false;
             return true;
         }
@@ -174,6 +165,12 @@ namespace WalkerSim
                         ViewServerPort = int.Parse(node.InnerText);
                         Log.Out("[WalkerSim] {0} = {1}", "ViewServerPort", ViewServerPort);
                         break;
+                    case "MinIdleSeconds":
+                        MinIdleSeconds = int.Parse(node.InnerText);
+                        break;
+                    case "MaxIdleSeconds":
+                        MaxIdleSeconds = int.Parse(node.InnerText);
+                        break;
                 }
             }
             catch (Exception)
@@ -198,9 +195,8 @@ namespace WalkerSim
                     var distance = entry.Attributes.GetNamedItem("Distance");
                     if (distance == null)
                         continue;
-
-                    float dist = 0.0f;
-                    if (!float.TryParse(distance.Value, out dist))
+                    
+                    if (!float.TryParse(distance.Value, out var dist))
                         continue;
 
                     SoundDistance[audioName.Value] = dist;
