@@ -63,16 +63,17 @@ namespace WalkerSim
                     if (CheckIfDistracted(entityZombie)) return Unit.Default;
 
                     // If zombie reached its target, send it somewhere
-                    var distanceToTarget = Vector3.Distance(entityZombie.position, entityZombie.InvestigatePosition);
+                    var distanceToTarget = Vector3.Distance(entityZombie.position, intendedGoal);
                     if (distanceToTarget <= 20.0f)
                     {
 #if DEBUG
                         Log.Out(
                             $"[{Parent.id}] Reached its target at {entityZombie.InvestigatePosition}.");
 #endif
-                        entityZombie.ClearInvestigatePosition();
+                        // entityZombie.ClearInvestigatePosition();
                         reachedInitialTarget = true;
-                        _state.OnNext(State.Idle);
+                        // _state.OnNext(State.Idle);
+                        _state.OnNext(State.WalkOut);
                     }
                     else
                     {
@@ -105,8 +106,22 @@ namespace WalkerSim
                 });
         }
 
+        private Vector3 GetWalkAwayVector(EntityZombie entityZombie, World world)
+        {
+            var vec = Parent.Inactive.targetPos - entityZombie.position;
+            vec.Normalize();
+            vec *= 100;
+            vec = entityZombie.position + vec;
+            int height = world.GetTerrainHeight((int)vec.x, (int)vec.z);
+            vec.y = height + 1.0f;
+            return vec;
+        }
+
         private IObservable<Unit> WalkOut()
         {
+#if DEBUG
+            Log.Out($"[{Parent.id}] walking away.");
+#endif
             return Observable.Return(Unit.Default) 
                 .ObserveOn(MyScheduler.Instance)
                 .Select(_ =>
@@ -114,14 +129,18 @@ namespace WalkerSim
                     var world = GameManager.Instance.World;
                     if (world.GetEntity(entityId) is EntityZombie entityZombie)
                     {
+                        intendedGoal = GetWalkAwayVector(entityZombie, world);
 #if DEBUG
-                        Log.Out($"[{Parent.id}] walking away.");
+                        var distanceToTarget = Vector3.Distance(entityZombie.position, intendedGoal);
+                        Log.Out($"[{Parent.id}] [{_state.Value}] initial walk away goal was {distanceToTarget} away from its target");
 #endif
-                        intendedGoal = Parent.Inactive.targetPos;
                         entityZombie.SetInvestigatePosition(
-                            intendedGoal,
+                            entityZombie.position,
                             6000,
                             false);
+#if DEBUG
+                        Log.Out($"[{Parent.id}] [{_state.Value}] has investigation target? {entityZombie.HasInvestigatePosition}.  Investigation target: {entityZombie.InvestigatePosition}");
+#endif
                     }
                     
                     return Unit.Default;
@@ -134,10 +153,23 @@ namespace WalkerSim
                         if (world.GetEntity(entityId) is EntityZombie entityZombie)
                         {
 #if DEBUG
-                            var distanceToTarget = Vector3.Distance(entityZombie.position, entityZombie.InvestigatePosition);
+                            var distanceToTarget = Vector3.Distance(entityZombie.position, intendedGoal);
                             Log.Out($"[{Parent.id}] [{_state.Value}] was {distanceToTarget} away from its target");
+                            Log.Out($"[{Parent.id}] [{_state.Value}] has investigation target? {entityZombie.HasInvestigatePosition}.  Investigation target: {entityZombie.InvestigatePosition}");
 #endif
-                            CheckIfDistracted(entityZombie);
+                            if (CheckIfDistracted(entityZombie)) return Unit.Default;
+
+                            if (distanceToTarget <= 20f)
+                            {
+#if DEBUG
+                                Log.Out($"[{Parent.id}] [{_state.Value}] updating walkaway target");
+#endif
+                                intendedGoal = GetWalkAwayVector(entityZombie, world);
+                                entityZombie.SetInvestigatePosition(
+                                    entityZombie.position,
+                                    6000,
+                                    false);
+                            }
                         }
 
                         return Unit.Default;
@@ -175,7 +207,7 @@ namespace WalkerSim
             if (intendedGoal != entityZombie.InvestigatePosition)
             {
 #if DEBUG
-                Log.Out($"[{Parent.id}] was distracted.");
+                Log.Out($"[{Parent.id}] was distracted.  Goal was {intendedGoal} but investigate target was {entityZombie.InvestigatePosition}");
 #endif
                 _state.OnNext(State.Distracted);
                 return true;
